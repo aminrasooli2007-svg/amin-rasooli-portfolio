@@ -32,39 +32,31 @@ function App() {
     { name: "GitHub", icon: GitBranch },
     { name: "Next.js", icon: Globe },
     { name: "SQL", icon: Database },
-    { name: "Programming", icon: Code2 }
   ]
 
   const projects = [
     {
       title: "TodoFlow",
       description:
-        "A modern task management application with filters, search, notifications, LocalStorage and dark mode.",
-      image: "/projects/todoflow.png",
+        "TodoFlow — A modern and elegant task management app built with React, designed to help you organize your day, stay focused, and get things done.",
+      image: "/img/Todo.png",
       github: "https://github.com/aminrasooli2007-svg/todo-app-react",
       technologies: ["React", "JavaScript", "CSS", "LocalStorage"]
     },
     {
-      title: "Find Your Everyday Tech",
+      title: " Expense Tracker",
       description:
-        "A product discovery interface with search and price sorting features.",
-      image: "/projects/everyday-tech.png",
+        "A modern Expense Tracker built with React. This project is being developed step by step, with new features and improvements added regularly while practicing React, JavaScript, UI design, and problem-solving.",
+      image: "/img/Exp.png",
       github: "#",
-      technologies: ["React", "JavaScript", "CSS"]
+      technologies: ["React", "JavaScript", "CSS" , "LocalStorage"]
     },
-    {
-      title: "Word Duel",
-      description:
-        "A JavaScript typing game focused on speed, accuracy and user interaction.",
-      image: "/projects/word-duel.png",
-      github: "#",
-      technologies: ["HTML", "CSS", "JavaScript"]
-    },
+    
     {
       title: "Workshop Management",
       description:
-        "A practical workshop management project built with vanilla JavaScript.",
-      image: "/projects/workshop-management.png",
+        "A JavaScript-based shop management system for managing products, inventory, and sales.",
+      image: "/img/Shop.png",
       github: "#",
       technologies: ["HTML", "CSS", "JavaScript"]
     }
@@ -85,7 +77,7 @@ function App() {
           className="logo"
           onClick={() => scrollToSection("home")}
         >
-          Amin<span>.</span>
+          Amin Rasooli<span>.</span>
         </button>
 
         <nav className={menuOpen ? "nav-links open" : "nav-links"}>
