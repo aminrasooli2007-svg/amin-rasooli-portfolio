@@ -64,11 +64,8 @@ function Hero({ scrollToSection }) {
             in
           </a>
 
-          <a href="mailto:amin.rasooli@example.com">
-            @
-          </a>
 
-          <a href="#" onClick={(e) => e.preventDefault()}>
+          <a href="https://www.instagram.com/engineer_amin2007/" >
             IG
           </a>
         </div>

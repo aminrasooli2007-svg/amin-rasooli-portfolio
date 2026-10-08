@@ -1,12 +1,18 @@
-
 import { Mail } from "lucide-react"
 
 function Contact() {
+  const handleContact = () => {
+    window.open(
+      "https://mail.google.com/mail/?view=cm&fs=1&to=aminrasooli2007@gmail.com",
+      "_blank"
+    )
+  }
+
   return (
     <section id="contact" className="section contact-section">
       <div className="contact-card">
         <div className="contact-content">
-          <span>04 — Contact</span>
+          <span>05 — Contact</span>
 
           <h2>
             Let's build something
@@ -18,13 +24,13 @@ function Contact() {
             reach out.
           </p>
 
-          <a
+          <button
             className="primary-button"
-            href="mailto:amin.rasooli@example.com"
+            onClick={handleContact}
           >
             Get In Touch
             <Mail size={18} />
-          </a>
+          </button>
         </div>
       </div>
     </section>

@@ -16,9 +16,9 @@ import Hero from "./components/Hero"
 import About from "./components/About"
 import Skills from "./components/Skills"
 import Projects from "./components/Projects"
+import Services from "./components/Services"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
-import Services from "./components/Services"
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
@@ -79,9 +79,37 @@ function App() {
   ]
 
   const scrollToSection = (id) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth"
-    })
+    const element = document.getElementById(id)
+
+    if (!element) return
+
+    const start = window.scrollY
+    const target = element.getBoundingClientRect().top + window.scrollY - 75
+    const distance = target - start
+    const duration = 750
+    let startTime = null
+
+    const easeInOut = (time) => {
+      return time < 0.5
+        ? 4 * time * time * time
+        : 1 - Math.pow(-2 * time + 2, 3) / 2
+    }
+
+    const animateScroll = (currentTime) => {
+      if (!startTime) startTime = currentTime
+
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const easedProgress = easeInOut(progress)
+
+      window.scrollTo(0, start + distance * easedProgress)
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll)
+      }
+    }
+
+    requestAnimationFrame(animateScroll)
 
     setMenuOpen(false)
   }
