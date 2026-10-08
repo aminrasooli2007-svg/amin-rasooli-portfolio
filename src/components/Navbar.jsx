@@ -64,6 +64,16 @@ function Navbar({
         </a>
 
         <a
+          href="#services"
+          onClick={(e) => {
+            e.preventDefault()
+            scrollToSection("services")
+          }}
+        >
+          Services
+        </a>
+
+        <a
           href="#contact"
           onClick={(e) => {
             e.preventDefault()
