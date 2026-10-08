@@ -20,7 +20,7 @@ import Contact from "./components/Contact"
 import Footer from "./components/Footer"
 
 function App() {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const skills = [
