@@ -54,14 +54,18 @@ function App() {
     {
       title: "Expense Tracker",
       description:
-        "A modern Expense Tracker built with React. This project is being developed step by step, with new features and improvements added regularly while practicing React, JavaScript, UI design, and problem-solving.",
+        "A full-stack personal finance tracker built with React, Vite, and Supabase. Features user authentication, secure user-specific transaction management, income and expense tracking, search, filtering, and dashboard summaries. PostgreSQL Row Level Security (RLS) policies help ensure users can access only their own transactions.",
       image: "/img/Exp.png",
       github: "#",
       technologies: [
         "React",
         "JavaScript",
-        "CSS",
-        "LocalStorage"
+        "CSS3",
+        "Vite",
+        "Supabase",
+        "PostgreSQL",
+        "Row Level Security (RLS)",
+        "Lucide React"
       ]
     },
     {
