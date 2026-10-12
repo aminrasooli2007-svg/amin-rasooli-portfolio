@@ -5,7 +5,7 @@ A modern, responsive personal portfolio website built with **React** and **JavaS
 ## 🚀 Live Preview
 
 > Coming soon
-
+ 
 ## 📌 About The Project
 
 This portfolio was created to build a professional online presence and showcase my journey in frontend development.
