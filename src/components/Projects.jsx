@@ -33,12 +33,19 @@ function Projects({ projects }) {
               <div className="project-icon">
                 <Code2 size={21} />
               </div>
-
               <a
-                href={project.github}
+                href={
+                  project.title.toLowerCase().includes("expense")
+                    ? "https://hisabchi.vercel.app/"
+                    : project.title.toLowerCase().includes("workshop")
+                      ? "https://workshop-management-eight.vercel.app/"
+                      : project.title.toLowerCase().includes("todo")
+                        ? "https://todo-app-react-chi-seven.vercel.app/"
+                        : "#"
+                }
                 target="_blank"
                 rel="noreferrer"
-                aria-label={`Open ${project.title} on GitHub`}
+                aria-label={`Open ${project.title} live demo`}
               >
                 <ArrowUpRight size={19} />
               </a>
