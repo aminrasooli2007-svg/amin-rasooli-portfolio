@@ -1,87 +1,45 @@
 
-import {
-  Menu,
-  Moon,
-  Sun,
-  X
-} from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
+import { Menu, Moon, Sun, X } from "lucide-react"
 
 function Navbar({
   darkMode,
   setDarkMode,
   menuOpen,
-  setMenuOpen,
-  scrollToSection
+  setMenuOpen
 }) {
+  const location = useLocation()
+
+  const links = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Skills", path: "/skills" },
+    { name: "Projects", path: "/projects" },
+    { name: "Services", path: "/services" },
+    { name: "Contact", path: "/contact" }
+  ]
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
     <header className="navbar">
-      <button
-        className="logo"
-        onClick={() => scrollToSection("home")}
-      >
+      <Link to="/" className="logo" onClick={closeMenu}>
         Amin Rasooli<span>.</span>
-      </button>
+      </Link>
 
       <nav className={menuOpen ? "nav-links open" : "nav-links"}>
-        <a
-          href="#home"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection("home")
-          }}
-        >
-          Home
-        </a>
-
-        <a
-          href="#about"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection("about")
-          }}
-        >
-          About
-        </a>
-
-        <a
-          href="#skills"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection("skills")
-          }}
-        >
-          Skills
-        </a>
-
-        <a
-          href="#projects"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection("projects")
-          }}
-        >
-          Projects
-        </a>
-
-        <a
-          href="#services"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection("services")
-          }}
-        >
-          Services
-        </a>
-
-        <a
-          href="#contact"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection("contact")
-          }}
-        >
-          Contact
-        </a>
+        {links.map((link) => (
+          <Link
+            key={link.path}
+            to={link.path}
+            onClick={closeMenu}
+            className={
+              location.pathname === link.path ? "active" : ""
+            }
+          >
+            {link.name}
+          </Link>
+        ))}
       </nav>
 
       <div className="nav-actions">
@@ -97,6 +55,7 @@ function Navbar({
           className="menu-button"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>

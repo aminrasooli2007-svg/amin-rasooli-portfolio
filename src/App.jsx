@@ -1,5 +1,6 @@
 
 import { useState } from "react"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import {
   Atom,
   Braces,
@@ -40,21 +41,15 @@ function App() {
     {
       title: "TodoFlow",
       description:
-        "TodoFlow — A modern and elegant task management app built with React, designed to help you organize your day, stay focused, and get things done.",
+        "A modern task management app built with React to organize daily tasks.",
       image: "/img/Todo.png",
-      github:
-        "https://github.com/aminrasooli2007-svg/todo-app-react",
-      technologies: [
-        "React",
-        "JavaScript",
-        "CSS",
-        "LocalStorage"
-      ]
+      github: "https://github.com/aminrasooli2007-svg/todo-app-react",
+      technologies: ["React", "JavaScript", "CSS", "LocalStorage"]
     },
     {
       title: "Expense Tracker",
       description:
-        "A full-stack personal finance tracker built with React, Vite, and Supabase. Features user authentication, secure user-specific transaction management, income and expense tracking, search, filtering, and dashboard summaries. PostgreSQL Row Level Security (RLS) policies help ensure users can access only their own transactions.",
+        "A personal finance tracker built with React, Vite, and Supabase.",
       image: "/img/Exp.png",
       github: "#",
       technologies: [
@@ -63,82 +58,56 @@ function App() {
         "CSS3",
         "Vite",
         "Supabase",
-        "PostgreSQL",
-        "Row Level Security (RLS)",
-        "Lucide React"
+        "PostgreSQL"
       ]
     },
     {
       title: "Workshop Management",
       description:
-        "A JavaScript-based shop management system for managing products, inventory, and sales.",
+        "A shop management system for products, inventory, and sales.",
       image: "/img/Shop.png",
       github: "#",
-      technologies: [
-        "HTML",
-        "CSS",
-        "JavaScript"
-      ]
+      technologies: ["HTML", "CSS", "JavaScript"]
     }
   ]
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id)
-
-    if (!element) return
-
-    const start = window.scrollY
-    const target = element.getBoundingClientRect().top + window.scrollY - 75
-    const distance = target - start
-    const duration = 750
-    let startTime = null
-
-    const easeInOut = (time) => {
-      return time < 0.5
-        ? 4 * time * time * time
-        : 1 - Math.pow(-2 * time + 2, 3) / 2
-    }
-
-    const animateScroll = (currentTime) => {
-      if (!startTime) startTime = currentTime
-
-      const elapsed = currentTime - startTime
-      const progress = Math.min(elapsed / duration, 1)
-      const easedProgress = easeInOut(progress)
-
-      window.scrollTo(0, start + distance * easedProgress)
-
-      if (progress < 1) {
-        requestAnimationFrame(animateScroll)
-      }
-    }
-
-    requestAnimationFrame(animateScroll)
-
-    setMenuOpen(false)
-  }
-
   return (
-    <div className={darkMode ? "portfolio" : "portfolio light"}>
-      <Navbar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        scrollToSection={scrollToSection}
-      />
+    <BrowserRouter>
+      <div className={darkMode ? "portfolio" : "portfolio light"}>
+        <Navbar
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
+        />
 
-      <main>
-        <Hero scrollToSection={scrollToSection} />
-        <About />
-        <Skills skills={skills} />
-        <Projects projects={projects} />
-        <Services />
-        <Contact />
-      </main>
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Hero />
+                  <About />
+                  <Skills skills={skills} />
+                  <Projects projects={projects} />
+                  <Services />
+                  <Contact />
+                </>
+              }
+            />
 
-      <Footer />
-    </div>
+            <Route path="/about" element={<About />} />
+            <Route path="/skills" element={<Skills skills={skills} />} />
+            <Route path="/projects" element={<Projects projects={projects} />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
