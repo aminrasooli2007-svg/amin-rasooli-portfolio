@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   BrowserRouter,
   Routes,
@@ -43,6 +43,58 @@ const pageVariants = {
   }
 }
 
+const defaultProjects = [
+  {
+    title: "TodoFlow",
+    description:
+      "A modern task management app built with React to help organize daily tasks.",
+    image: "/img/Todo.png",
+    github: "https://github.com/aminrasooli2007-svg/todo-app-react",
+    technologies: ["React", "JavaScript", "CSS", "LocalStorage"]
+  },
+  {
+    title: "Expense Tracker",
+    description:
+      "A personal finance tracker built with React, Vite, and Supabase.",
+    image: "/img/Exp.png",
+    github: "#",
+    technologies: [
+      "React",
+      "JavaScript",
+      "CSS3",
+      "Vite",
+      "Supabase",
+      "PostgreSQL"
+    ]
+  },
+  {
+    title: "Workshop Management",
+    description:
+      "A shop management system for products, inventory, and sales.",
+    image: "/img/Shop.png",
+    github: "#",
+    technologies: ["HTML", "CSS", "JavaScript"]
+  }
+]
+
+const getInitialProjects = () => {
+  try {
+    const savedProjects = localStorage.getItem("portfolioProjects")
+
+    if (savedProjects) {
+      const parsedProjects = JSON.parse(savedProjects)
+
+      if (Array.isArray(parsedProjects)) {
+        return parsedProjects
+      }
+    }
+
+    return defaultProjects
+  } catch {
+    return defaultProjects
+  }
+}
+
 function AnimatedPage({ children }) {
   return (
     <motion.div
@@ -63,7 +115,16 @@ function AnimatedPage({ children }) {
 function AppContent() {
   const [darkMode, setDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [projects, setProjects] = useState(getInitialProjects)
   const location = useLocation()
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("portfolioProjects", JSON.stringify(projects))
+    } catch {
+      return
+    }
+  }, [projects])
 
   const skills = [
     { name: "HTML", icon: FileCode2 },
@@ -76,40 +137,6 @@ function AppContent() {
     { name: "Next.js", icon: Globe },
     { name: "SQL", icon: Database }
   ]
-
-  const [projects, setProjects] = useState([
-    {
-      title: "TodoFlow",
-      description:
-        "A modern task management app built with React to help organize daily tasks.",
-      image: "/img/Todo.png",
-      github: "https://github.com/aminrasooli2007-svg/todo-app-react",
-      technologies: ["React", "JavaScript", "CSS", "LocalStorage"]
-    },
-    {
-      title: "Expense Tracker",
-      description:
-        "A personal finance tracker built with React, Vite, and Supabase.",
-      image: "/img/Exp.png",
-      github: "#",
-      technologies: [
-        "React",
-        "JavaScript",
-        "CSS3",
-        "Vite",
-        "Supabase",
-        "PostgreSQL"
-      ]
-    },
-    {
-      title: "Workshop Management",
-      description:
-        "A shop management system for products, inventory, and sales.",
-      image: "/img/Shop.png",
-      github: "#",
-      technologies: ["HTML", "CSS", "JavaScript"]
-    }
-  ])
 
   return (
     <div className={darkMode ? "portfolio" : "portfolio light"}>
