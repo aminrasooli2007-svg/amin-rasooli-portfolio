@@ -1,6 +1,12 @@
 
 import { useState } from "react"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation
+} from "react-router-dom"
+import { AnimatePresence, motion } from "framer-motion"
 import {
   Atom,
   Braces,
@@ -21,9 +27,42 @@ import Services from "./components/Services"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
 
-function App() {
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    y: 18
+  },
+  animate: {
+    opacity: 1,
+    y: 0
+  },
+  exit: {
+    opacity: 0,
+    y: -12
+  }
+}
+
+function AnimatedPage({ children }) {
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{
+        duration: 0.35,
+        ease: "easeOut"
+      }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function AppContent() {
   const [darkMode, setDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
 
   const skills = [
     { name: "HTML", icon: FileCode2 },
@@ -41,7 +80,7 @@ function App() {
     {
       title: "TodoFlow",
       description:
-        "A modern task management app built with React to organize daily tasks.",
+        "A modern task management app built with React to help organize daily tasks.",
       image: "/img/Todo.png",
       github: "https://github.com/aminrasooli2007-svg/todo-app-react",
       technologies: ["React", "JavaScript", "CSS", "LocalStorage"]
@@ -72,41 +111,95 @@ function App() {
   ]
 
   return (
-    <BrowserRouter>
-      <div className={darkMode ? "portfolio" : "portfolio light"}>
-        <Navbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          menuOpen={menuOpen}
-          setMenuOpen={setMenuOpen}
-        />
+    <div className={darkMode ? "portfolio" : "portfolio light"}>
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+      />
 
-        <main>
-          <Routes>
+      <main>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
             <Route
               path="/"
               element={
-                <>
-                  <Hero />
-                  <About />
-                  <Skills skills={skills} />
-                  <Projects projects={projects} />
-                  <Services />
-                  <Contact />
-                </>
+                <AnimatedPage>
+                  <Hero darkMode={darkMode} />
+                </AnimatedPage>
               }
             />
 
-            <Route path="/about" element={<About />} />
-            <Route path="/skills" element={<Skills skills={skills} />} />
-            <Route path="/projects" element={<Projects projects={projects} />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </main>
+            <Route
+              path="/about"
+              element={
+                <AnimatedPage>
+                  <About />
+                </AnimatedPage>
+              }
+            />
 
-        <Footer />
-      </div>
+            <Route
+              path="/skills"
+              element={
+                <AnimatedPage>
+                  <Skills skills={skills} />
+                </AnimatedPage>
+              }
+            />
+
+            <Route
+              path="/projects"
+              element={
+                <AnimatedPage>
+                  <Projects projects={projects} />
+                </AnimatedPage>
+              }
+            />
+
+            <Route
+              path="/services"
+              element={
+                <AnimatedPage>
+                  <Services />
+                </AnimatedPage>
+              }
+            />
+
+            <Route
+              path="/contact"
+              element={
+                <AnimatedPage>
+                  <Contact />
+                </AnimatedPage>
+              }
+            />
+
+            <Route
+              path="*"
+              element={
+                <AnimatedPage>
+                  <section className="not-found">
+                    <h1>404</h1>
+                    <p>Page not found.</p>
+                  </section>
+                </AnimatedPage>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
+      </main>
+
+      <Footer />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   )
 }

@@ -1271,3 +1271,150 @@ button {
     text-align: center;
   }
 }
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes gradientMove {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(64, 51, 195, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(64, 51, 195, 0.3);
+  }
+}
+
+.portfolio {
+  min-height: 100vh;
+}
+
+.portfolio .logo {
+  transition: transform 0.25s ease;
+}
+
+.portfolio .logo:hover {
+  transform: translateY(-2px);
+}
+
+.portfolio .nav-links a {
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.portfolio .nav-links a:hover {
+  transform: translateY(-2px);
+}
+
+.portfolio .theme-button,
+.portfolio .menu-button {
+  transition: transform 0.25s ease;
+}
+
+.portfolio .theme-button:hover,
+.portfolio .menu-button:hover {
+  transform: rotate(8deg) scale(1.06);
+}
+
+.portfolio .project-card,
+.portfolio .skill-card,
+.portfolio .service-card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.portfolio .project-card:hover,
+.portfolio .skill-card:hover,
+.portfolio .service-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 15px 35px rgba(64, 51, 195, 0.13);
+}
+
+.portfolio .hero-image,
+.portfolio .hero-visual {
+  animation: float 5s ease-in-out infinite;
+}
+
+.portfolio .hero-title span {
+  background-size: 200% 200%;
+  animation: gradientMove 5s ease infinite;
+}
+
+.portfolio .contact-form {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.hero-name {
+  min-height: 1.2em;
+}
+
+.typing-cursor {
+  display: inline-block;
+  margin-left: 4px;
+  color: #4033C3;
+  animation: typing-blink 0.7s step-end infinite;
+}
+
+@keyframes typing-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-cursor {
+    animation: none;
+  }
+}
+
+
+
+.hero-name {
+  min-height: 1.2em;
+}
+
+.typing-cursor {
+  display: inline-block;
+  margin-left: 4px;
+  color: #4033C3;
+  animation: typing-blink 0.7s step-end infinite;
+}
+
+@keyframes typing-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-cursor {
+    animation: none;
+  }
+}
+

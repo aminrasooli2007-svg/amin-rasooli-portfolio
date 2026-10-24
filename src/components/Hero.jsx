@@ -1,10 +1,41 @@
 
-import {
-  ArrowDown,
-  Mail
-} from "lucide-react"
+import { useEffect, useState } from "react"
+import { ArrowDown, Mail } from "lucide-react"
 
-function Hero({ scrollToSection }) {
+function Hero({ scrollToSection, darkMode }) {
+  const firstName = "Amin"
+  const lastName = "Rasooli"
+  const fullName = `${firstName} ${lastName}`
+
+  const [displayedName, setDisplayedName] = useState("")
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    let timeout
+
+    if (!isDeleting && displayedName === fullName) {
+      timeout = setTimeout(() => setIsDeleting(true), 1500)
+    } else if (isDeleting && displayedName === "") {
+      timeout = setTimeout(() => setIsDeleting(false), 500)
+    } else {
+      timeout = setTimeout(() => {
+        setDisplayedName((current) =>
+          isDeleting
+            ? current.slice(0, -1)
+            : fullName.slice(0, current.length + 1)
+        )
+      }, isDeleting ? 65 : 120)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [displayedName, isDeleting, fullName])
+
+  const displayedFirstName = displayedName.slice(0, firstName.length)
+  const displayedLastName =
+    displayedName.length > firstName.length
+      ? displayedName.slice(firstName.length + 1)
+      : ""
+
   return (
     <section id="home" className="hero-section">
       <div className="hero-content">
@@ -15,8 +46,19 @@ function Hero({ scrollToSection }) {
 
         <p className="hero-small-title">Hello, I'm</p>
 
-        <h1>
-          Amin <span>Rasooli</span>
+        <h1 className="hero-name">
+          <span style={{ color: "#4033C3" }}>
+            {displayedFirstName}
+          </span>
+          {displayedName.length > firstName.length && (
+            <>
+              {" "}
+              <span style={{ color: darkMode ? "#FFFFFF" : "#000000" }}>
+                {displayedLastName}
+              </span>
+            </>
+          )}
+          <span className="typing-cursor">|</span>
         </h1>
 
         <h2>
@@ -64,8 +106,11 @@ function Hero({ scrollToSection }) {
             in
           </a>
 
-
-          <a href="https://www.instagram.com/engineer_amin2007/" >
+          <a
+            href="https://www.instagram.com/engineer_amin2007/"
+            target="_blank"
+            rel="noreferrer"
+          >
             IG
           </a>
         </div>
@@ -93,33 +138,24 @@ function Hero({ scrollToSection }) {
 
             <p>
               <span className="code-space">name:</span>{" "}
-              <span className="code-green">
-                "Amin Rasooli"
-              </span>
-              ,
+              <span className="code-green">"Amin Rasooli"</span>,
             </p>
 
             <p>
               <span className="code-space">role:</span>{" "}
-              <span className="code-green">
-                "Frontend Developer"
-              </span>
-              ,
+              <span className="code-green">"Frontend Developer"</span>,
             </p>
 
             <p>
               <span className="code-space">stack:</span>{" "}
               <span className="code-green">
                 ["React", "JS", "Tailwind"]
-              </span>
-              ,
+              </span>,
             </p>
 
             <p>
               <span className="code-space">learning:</span>{" "}
-              <span className="code-green">
-                "Every day"
-              </span>
+              <span className="code-green">"Every day"</span>
             </p>
 
             <p>{"}"}</p>
