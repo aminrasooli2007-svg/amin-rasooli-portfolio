@@ -7,9 +7,11 @@ import {
   useLocation
 } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
+import { Toaster } from "react-hot-toast"
 import {
   Atom,
   Braces,
+  Code2,
   Database,
   FileCode2,
   GitBranch,
@@ -29,18 +31,9 @@ import Footer from "./components/Footer"
 import Admin from "./components/Admin"
 
 const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 18
-  },
-  animate: {
-    opacity: 1,
-    y: 0
-  },
-  exit: {
-    opacity: 0,
-    y: -12
-  }
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -12 }
 }
 
 const defaultProjects = [
@@ -77,22 +70,53 @@ const defaultProjects = [
   }
 ]
 
-const getInitialProjects = () => {
+const defaultSkills = [
+  { name: "HTML", icon: FileCode2 },
+  { name: "CSS", icon: Palette },
+  { name: "JavaScript", icon: Braces },
+  { name: "React", icon: Atom },
+  { name: "Tailwind CSS", icon: Wind },
+  { name: "Git", icon: GitBranch },
+  { name: "GitHub", icon: GitBranch },
+  { name: "Next.js", icon: Globe },
+  { name: "SQL", icon: Database }
+]
+
+const getStoredData = (key, fallback) => {
   try {
-    const savedProjects = localStorage.getItem("portfolioProjects")
+    const savedData = localStorage.getItem(key)
 
-    if (savedProjects) {
-      const parsedProjects = JSON.parse(savedProjects)
+    if (savedData !== null) {
+      const parsedData = JSON.parse(savedData)
 
-      if (Array.isArray(parsedProjects)) {
-        return parsedProjects
+      if (Array.isArray(parsedData)) {
+        return parsedData
       }
     }
-
-    return defaultProjects
   } catch {
-    return defaultProjects
+    return fallback
   }
+
+  return fallback
+}
+
+const getInitialSkills = () => {
+  const savedSkills = getStoredData("portfolioSkills", null)
+
+  if (savedSkills === null) {
+    return defaultSkills
+  }
+
+  return savedSkills.map((skill) => {
+    const matchingSkill = defaultSkills.find(
+      (item) => item.name === skill.name
+    )
+
+    return {
+      name: skill.name,
+      icon: matchingSkill?.icon || Code2
+    }
+  })
 }
 
 function AnimatedPage({ children }) {
@@ -102,10 +126,7 @@ function AnimatedPage({ children }) {
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{
-        duration: 0.35,
-        ease: "easeOut"
-      }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -115,7 +136,13 @@ function AnimatedPage({ children }) {
 function AppContent() {
   const [darkMode, setDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [projects, setProjects] = useState(getInitialProjects)
+
+  const [projects, setProjects] = useState(() =>
+    getStoredData("portfolioProjects", defaultProjects)
+  )
+
+  const [skills, setSkills] = useState(getInitialSkills)
+
   const location = useLocation()
 
   useEffect(() => {
@@ -126,20 +153,42 @@ function AppContent() {
     }
   }, [projects])
 
-  const skills = [
-    { name: "HTML", icon: FileCode2 },
-    { name: "CSS", icon: Palette },
-    { name: "JavaScript", icon: Braces },
-    { name: "React", icon: Atom },
-    { name: "Tailwind CSS", icon: Wind },
-    { name: "Git", icon: GitBranch },
-    { name: "GitHub", icon: GitBranch },
-    { name: "Next.js", icon: Globe },
-    { name: "SQL", icon: Database }
-  ]
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "portfolioSkills",
+        JSON.stringify(skills.map((skill) => ({ name: skill.name })))
+      )
+    } catch {
+      return
+    }
+  }, [skills])
 
   return (
     <div className={darkMode ? "portfolio" : "portfolio light"}>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "12px",
+            fontSize: "14px"
+          },
+          success: {
+            style: {
+              background: "#4033C3",
+              color: "#ffffff"
+            }
+          },
+          error: {
+            style: {
+              background: "#E66B3B",
+              color: "#ffffff"
+            }
+          }
+        }}
+      />
+
       <Navbar
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -213,6 +262,7 @@ function AppContent() {
                     projects={projects}
                     setProjects={setProjects}
                     skills={skills}
+                    setSkills={setSkills}
                   />
                 </AnimatedPage>
               }

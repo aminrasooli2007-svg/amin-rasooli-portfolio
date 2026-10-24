@@ -1,6 +1,7 @@
 
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import toast from "react-hot-toast"
 import {
   ArrowLeft,
   FolderKanban,
@@ -16,16 +17,26 @@ import {
 } from "lucide-react"
 import "./Admin.css"
 
-function Admin({ darkMode, projects, setProjects, skills }) {
-  const [showForm, setShowForm] = useState(false)
+function Admin({
+  darkMode,
+  projects,
+  setProjects,
+  skills,
+  setSkills
+}) {
+  const [showProjectForm, setShowProjectForm] = useState(false)
+  const [showSkillForm, setShowSkillForm] = useState(false)
   const [editingIndex, setEditingIndex] = useState(null)
-  const [formData, setFormData] = useState({
+
+  const [projectForm, setProjectForm] = useState({
     title: "",
     description: "",
     image: "",
     github: "",
     technologies: ""
   })
+
+  const [skillName, setSkillName] = useState("")
 
   const stats = [
     {
@@ -45,8 +56,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
     }
   ]
 
-  const resetForm = () => {
-    setFormData({
+  const resetProjectForm = () => {
+    setProjectForm({
       title: "",
       description: "",
       image: "",
@@ -54,33 +65,34 @@ function Admin({ darkMode, projects, setProjects, skills }) {
       technologies: ""
     })
     setEditingIndex(null)
-    setShowForm(false)
+    setShowProjectForm(false)
   }
 
-  const handleChange = (event) => {
+  const handleProjectChange = (event) => {
     const { name, value } = event.target
 
-    setFormData((previous) => ({
+    setProjectForm((previous) => ({
       ...previous,
       [name]: value
     }))
   }
 
-  const handleSubmit = (event) => {
+  const handleProjectSubmit = (event) => {
     event.preventDefault()
 
     const project = {
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      image: formData.image.trim(),
-      github: formData.github.trim() || "#",
-      technologies: formData.technologies
+      title: projectForm.title.trim(),
+      description: projectForm.description.trim(),
+      image: projectForm.image.trim(),
+      github: projectForm.github.trim() || "#",
+      technologies: projectForm.technologies
         .split(",")
         .map((technology) => technology.trim())
         .filter(Boolean)
     }
 
     if (!project.title || !project.description) {
+      toast.error("Please fill in the required fields.")
       return
     }
 
@@ -90,34 +102,35 @@ function Admin({ darkMode, projects, setProjects, skills }) {
           index === editingIndex ? project : item
         )
       )
+      toast.success("Project updated successfully!")
     } else {
       setProjects((previous) => [...previous, project])
+      toast.success("Project added successfully!")
     }
 
-    resetForm()
+    resetProjectForm()
   }
 
-  const handleEdit = (index) => {
+  const handleProjectEdit = (index) => {
     const project = projects[index]
 
-    setFormData({
+    setProjectForm({
       title: project.title,
       description: project.description,
-      image: project.image,
-      github: project.github,
-      technologies: project.technologies.join(", ")
+      image: project.image || "",
+      github: project.github || "",
+      technologies: (project.technologies || []).join(", ")
     })
 
     setEditingIndex(index)
-    setShowForm(true)
+    setShowProjectForm(true)
+    setShowSkillForm(false)
   }
 
-  const handleDelete = (index) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${projects[index].title}"?`
-    )
+  const handleProjectDelete = (index) => {
+    const project = projects[index]
 
-    if (!confirmed) {
+    if (!window.confirm(`Delete "${project.title}"?`)) {
       return
     }
 
@@ -126,10 +139,49 @@ function Admin({ darkMode, projects, setProjects, skills }) {
     )
 
     if (editingIndex === index) {
-      resetForm()
+      resetProjectForm()
     } else if (editingIndex !== null && editingIndex > index) {
       setEditingIndex((previous) => previous - 1)
     }
+
+    toast.success("Project deleted successfully!")
+  }
+
+  const handleSkillSubmit = (event) => {
+    event.preventDefault()
+
+    const name = skillName.trim()
+
+    if (!name) {
+      toast.error("Please enter a skill name.")
+      return
+    }
+
+    const alreadyExists = skills.some(
+      (skill) => skill.name.toLowerCase() === name.toLowerCase()
+    )
+
+    if (alreadyExists) {
+      toast.error("This skill already exists!")
+      return
+    }
+
+    setSkills((previous) => [
+      ...previous,
+      { name, icon: Code2 }
+    ])
+
+    setSkillName("")
+    setShowSkillForm(false)
+    toast.success("Skill added successfully!")
+  }
+
+  const handleSkillDelete = (name) => {
+    setSkills((previous) =>
+      previous.filter((skill) => skill.name !== name)
+    )
+
+    toast.success("Skill deleted successfully!")
   }
 
   return (
@@ -139,7 +191,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
           <div>
             <span className="admin-label">ADMIN PANEL</span>
             <h1>Dashboard</h1>
-            <p>Manage and review your portfolio content.</p>
+            <p>Manage your portfolio content.</p>
           </div>
 
           <Link to="/" className="admin-back-link">
@@ -180,16 +232,17 @@ function Admin({ darkMode, projects, setProjects, skills }) {
 
         <div className="admin-section-header">
           <div>
-            <h2>Content Management</h2>
-            <p>Manage your portfolio projects.</p>
+            <h2>Project Management</h2>
+            <p>Add, edit, and delete portfolio projects.</p>
           </div>
 
           <button
             type="button"
             className="admin-primary-button"
             onClick={() => {
-              resetForm()
-              setShowForm(true)
+              resetProjectForm()
+              setShowProjectForm(true)
+              setShowSkillForm(false)
             }}
           >
             <Plus size={18} />
@@ -197,8 +250,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
           </button>
         </div>
 
-        {showForm && (
-          <form className="admin-project-form" onSubmit={handleSubmit}>
+        {showProjectForm && (
+          <form className="admin-project-form" onSubmit={handleProjectSubmit}>
             <div className="admin-form-header">
               <h2>
                 {editingIndex !== null ? "Edit Project" : "Add New Project"}
@@ -207,7 +260,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               <button
                 type="button"
                 className="admin-icon-button"
-                onClick={resetForm}
+                onClick={resetProjectForm}
                 aria-label="Close form"
               >
                 <X size={20} />
@@ -218,8 +271,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               Project Title
               <input
                 name="title"
-                value={formData.title}
-                onChange={handleChange}
+                value={projectForm.title}
+                onChange={handleProjectChange}
                 placeholder="Enter project title"
                 required
               />
@@ -229,8 +282,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               Description
               <textarea
                 name="description"
-                value={formData.description}
-                onChange={handleChange}
+                value={projectForm.description}
+                onChange={handleProjectChange}
                 placeholder="Describe your project"
                 rows={3}
                 required
@@ -241,8 +294,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               Image Path
               <input
                 name="image"
-                value={formData.image}
-                onChange={handleChange}
+                value={projectForm.image}
+                onChange={handleProjectChange}
                 placeholder="/img/project.png"
               />
             </label>
@@ -251,8 +304,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               GitHub URL
               <input
                 name="github"
-                value={formData.github}
-                onChange={handleChange}
+                value={projectForm.github}
+                onChange={handleProjectChange}
                 placeholder="https://github.com/username/project"
               />
             </label>
@@ -261,8 +314,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               Technologies
               <input
                 name="technologies"
-                value={formData.technologies}
-                onChange={handleChange}
+                value={projectForm.technologies}
+                onChange={handleProjectChange}
                 placeholder="React, JavaScript, CSS"
               />
             </label>
@@ -271,7 +324,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
               <button
                 type="button"
                 className="admin-secondary-button"
-                onClick={resetForm}
+                onClick={resetProjectForm}
               >
                 Cancel
               </button>
@@ -294,11 +347,14 @@ function Admin({ darkMode, projects, setProjects, skills }) {
         <div className="admin-project-list">
           {projects.length === 0 ? (
             <p className="admin-empty-message">
-              No projects yet. Click Add Project to create your first project.
+              No projects yet. Click Add Project to create one.
             </p>
           ) : (
             projects.map((project, index) => (
-              <article className="admin-project-item" key={`${project.title}-${index}`}>
+              <article
+                className="admin-project-item"
+                key={`${project.title}-${index}`}
+              >
                 <div className="admin-project-number">
                   {String(index + 1).padStart(2, "0")}
                 </div>
@@ -308,7 +364,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
                   <p>{project.description}</p>
 
                   <div className="admin-technologies">
-                    {project.technologies.map((technology) => (
+                    {(project.technologies || []).map((technology) => (
                       <span key={technology}>{technology}</span>
                     ))}
                   </div>
@@ -318,7 +374,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
                   <button
                     type="button"
                     className="admin-icon-button"
-                    onClick={() => handleEdit(index)}
+                    onClick={() => handleProjectEdit(index)}
                     aria-label={`Edit ${project.title}`}
                   >
                     <Pencil size={17} />
@@ -327,7 +383,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
                   <button
                     type="button"
                     className="admin-icon-button admin-delete-button"
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleProjectDelete(index)}
                     aria-label={`Delete ${project.title}`}
                   >
                     <Trash2 size={17} />
@@ -346,6 +402,101 @@ function Admin({ darkMode, projects, setProjects, skills }) {
           )}
         </div>
 
+        <div className="admin-section-header admin-skills-heading">
+          <div>
+            <h2>Skills Management</h2>
+            <p>Add or remove skills shown on your portfolio.</p>
+          </div>
+
+          <button
+            type="button"
+            className="admin-primary-button"
+            onClick={() => {
+              setShowSkillForm((previous) => !previous)
+              setShowProjectForm(false)
+            }}
+          >
+            <Plus size={18} />
+            Add Skill
+          </button>
+        </div>
+
+        {showSkillForm && (
+          <form className="admin-project-form" onSubmit={handleSkillSubmit}>
+            <div className="admin-form-header">
+              <h2>Add New Skill</h2>
+
+              <button
+                type="button"
+                className="admin-icon-button"
+                onClick={() => setShowSkillForm(false)}
+                aria-label="Close skill form"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <label>
+              Skill Name
+              <input
+                value={skillName}
+                onChange={(event) => setSkillName(event.target.value)}
+                placeholder="e.g. TypeScript"
+                required
+              />
+            </label>
+
+            <div className="admin-form-actions">
+              <button
+                type="button"
+                className="admin-secondary-button"
+                onClick={() => {
+                  setSkillName("")
+                  setShowSkillForm(false)
+                }}
+              >
+                Cancel
+              </button>
+
+              <button type="submit" className="admin-primary-button">
+                <Save size={17} />
+                Save Skill
+              </button>
+            </div>
+          </form>
+        )}
+
+        <div className="admin-project-list">
+          {skills.length === 0 ? (
+            <p className="admin-empty-message">
+              No skills yet. Click Add Skill to create one.
+            </p>
+          ) : (
+            skills.map((skill, index) => (
+              <article className="admin-project-item" key={skill.name}>
+                <div className="admin-project-number">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+
+                <div className="admin-project-info">
+                  <h3>{skill.name}</h3>
+                </div>
+
+                <div className="admin-project-actions">
+                  <button
+                    type="button"
+                    className="admin-icon-button admin-delete-button"
+                    onClick={() => handleSkillDelete(skill.name)}
+                    aria-label={`Delete ${skill.name}`}
+                  >
+                    <Trash2 size={17} />
+                  </button>
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+
         <div className="admin-management-grid">
           <article className="admin-management-card">
             <div className="admin-card-icon">
@@ -353,7 +504,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
             </div>
 
             <h3>Projects</h3>
-            <p>Manage the projects displayed on your portfolio.</p>
+            <p>View the projects displayed on your portfolio.</p>
 
             <Link to="/projects" className="admin-action-link">
               View Projects
@@ -367,7 +518,7 @@ function Admin({ darkMode, projects, setProjects, skills }) {
             </div>
 
             <h3>Skills</h3>
-            <p>Review the technical skills shown on your portfolio.</p>
+            <p>View the technical skills displayed on your portfolio.</p>
 
             <Link to="/skills" className="admin-action-link">
               View Skills
@@ -377,8 +528,8 @@ function Admin({ darkMode, projects, setProjects, skills }) {
         </div>
 
         <p className="admin-notice">
-          Project changes currently exist in application memory only. They
-          will reset when the page is refreshed.
+          Projects and skills are saved in this browser using localStorage.
+          They remain after refreshing the page.
         </p>
       </div>
     </section>
