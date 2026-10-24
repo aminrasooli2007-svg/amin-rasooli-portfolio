@@ -26,6 +26,7 @@ import Projects from "./components/Projects"
 import Services from "./components/Services"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
+import Admin from "./components/Admin"
 
 const pageVariants = {
   initial: {
@@ -177,6 +178,19 @@ function AppContent() {
             />
 
             <Route
+              path="/admin"
+              element={
+                <AnimatedPage>
+                  <Admin
+                    darkMode={darkMode}
+                    projects={projects}
+                    skills={skills}
+                  />
+                </AnimatedPage>
+              }
+            />
+
+            <Route
               path="*"
               element={
                 <AnimatedPage>
@@ -191,7 +205,7 @@ function AppContent() {
         </AnimatePresence>
       </main>
 
-      <Footer />
+      {location.pathname !== "/admin" && <Footer />}
     </div>
   )
 }

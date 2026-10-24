@@ -16,7 +16,8 @@ function Navbar({
     { name: "Skills", path: "/skills" },
     { name: "Projects", path: "/projects" },
     { name: "Services", path: "/services" },
-    { name: "Contact", path: "/contact" }
+    { name: "Contact", path: "/contact" },
+    { name: "Admin", path: "/admin" }
   ]
 
   const closeMenu = () => setMenuOpen(false)
