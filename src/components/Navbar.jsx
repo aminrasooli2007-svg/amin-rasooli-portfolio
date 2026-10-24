@@ -45,16 +45,18 @@ function Navbar({
 
       <div className="nav-actions">
         <button
+          type="button"
           className="theme-button"
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => setDarkMode((previous) => !previous)}
           aria-label="Toggle theme"
         >
           {darkMode ? <Sun size={19} /> : <Moon size={19} />}
         </button>
 
         <button
+          type="button"
           className="menu-button"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setMenuOpen((previous) => !previous)}
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
         >

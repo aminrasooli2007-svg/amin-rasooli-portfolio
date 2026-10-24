@@ -13,7 +13,8 @@ import {
   Pencil,
   Trash2,
   X,
-  Save
+  Save,
+  LogOut
 } from "lucide-react"
 import "./Admin.css"
 
@@ -22,7 +23,8 @@ function Admin({
   projects,
   setProjects,
   skills,
-  setSkills
+  setSkills,
+  onLogout
 }) {
   const [showProjectForm, setShowProjectForm] = useState(false)
   const [showSkillForm, setShowSkillForm] = useState(false)
@@ -39,21 +41,9 @@ function Admin({
   const [skillName, setSkillName] = useState("")
 
   const stats = [
-    {
-      title: "Total Projects",
-      value: projects.length,
-      icon: FolderKanban
-    },
-    {
-      title: "Total Skills",
-      value: skills.length,
-      icon: Code2
-    },
-    {
-      title: "Portfolio Pages",
-      value: 6,
-      icon: FileText
-    }
+    { title: "Total Projects", value: projects.length, icon: FolderKanban },
+    { title: "Total Skills", value: skills.length, icon: Code2 },
+    { title: "Portfolio Pages", value: 6, icon: FileText }
   ]
 
   const resetProjectForm = () => {
@@ -70,11 +60,7 @@ function Admin({
 
   const handleProjectChange = (event) => {
     const { name, value } = event.target
-
-    setProjectForm((previous) => ({
-      ...previous,
-      [name]: value
-    }))
+    setProjectForm((previous) => ({ ...previous, [name]: value }))
   }
 
   const handleProjectSubmit = (event) => {
@@ -166,11 +152,7 @@ function Admin({
       return
     }
 
-    setSkills((previous) => [
-      ...previous,
-      { name, icon: Code2 }
-    ])
-
+    setSkills((previous) => [...previous, { name, icon: Code2 }])
     setSkillName("")
     setShowSkillForm(false)
     toast.success("Skill added successfully!")
@@ -180,7 +162,6 @@ function Admin({
     setSkills((previous) =>
       previous.filter((skill) => skill.name !== name)
     )
-
     toast.success("Skill deleted successfully!")
   }
 
@@ -194,10 +175,21 @@ function Admin({
             <p>Manage your portfolio content.</p>
           </div>
 
-          <Link to="/" className="admin-back-link">
-            <ArrowLeft size={18} />
-            <span>View Portfolio</span>
-          </Link>
+          <div className="admin-header-actions">
+            <Link to="/" className="admin-back-link">
+              <ArrowLeft size={18} />
+              <span>View Portfolio</span>
+            </Link>
+
+            <button
+              type="button"
+              className="admin-secondary-button"
+              onClick={onLogout}
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
 
         <div className="admin-welcome">
@@ -205,7 +197,6 @@ function Admin({
             <h2>Welcome back, Amin!</h2>
             <p>Here is an overview of your portfolio.</p>
           </div>
-
           <div className="admin-welcome-icon">
             <Settings size={30} />
           </div>
@@ -220,7 +211,6 @@ function Admin({
                 <div className="admin-stat-icon">
                   <Icon size={22} />
                 </div>
-
                 <div>
                   <p>{stat.title}</p>
                   <h3>{stat.value}</h3>
@@ -502,10 +492,8 @@ function Admin({
             <div className="admin-card-icon">
               <FolderKanban size={24} />
             </div>
-
             <h3>Projects</h3>
             <p>View the projects displayed on your portfolio.</p>
-
             <Link to="/projects" className="admin-action-link">
               View Projects
               <ExternalLink size={16} />
@@ -516,10 +504,8 @@ function Admin({
             <div className="admin-card-icon">
               <Code2 size={24} />
             </div>
-
             <h3>Skills</h3>
             <p>View the technical skills displayed on your portfolio.</p>
-
             <Link to="/skills" className="admin-action-link">
               View Skills
               <ExternalLink size={16} />

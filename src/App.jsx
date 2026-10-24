@@ -22,8 +22,7 @@ import {
   Wind,
   LockKeyhole,
   Eye,
-  EyeOff,
-  LogOut
+  EyeOff
 } from "lucide-react"
 
 import Navbar from "./components/Navbar"
@@ -174,7 +173,7 @@ function AdminLogin({ onLogin }) {
           <h1>Welcome Back</h1>
           <p>Enter your password to manage your portfolio.</p>
 
-          <form onSubmit={handleSubmit} className="admin-login-form">
+          <form className="admin-login-form" onSubmit={handleSubmit}>
             <label htmlFor="admin-password">Password</label>
 
             <div className="admin-password-field">
@@ -224,9 +223,7 @@ function AdminLogin({ onLogin }) {
 function AppContent() {
   const [darkMode, setDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(
-    () => sessionStorage.getItem(AUTH_KEY) === "true"
-  )
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
 
   const [projects, setProjects] = useState(() =>
     getStoredData("portfolioProjects", defaultProjects)
@@ -266,7 +263,6 @@ function AppContent() {
   }
 
   const isAdminRoute = location.pathname === "/admin"
-  const showLogin = isAdminRoute && !isAdminAuthenticated
 
   return (
     <div className={darkMode ? "portfolio" : "portfolio light"}>
@@ -293,14 +289,12 @@ function AppContent() {
         }}
       />
 
-      {!showLogin && (
-        <Navbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          menuOpen={menuOpen}
-          setMenuOpen={setMenuOpen}
-        />
-      )}
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+      />
 
       <main>
         <AnimatePresence mode="wait">
@@ -364,26 +358,14 @@ function AppContent() {
               element={
                 <AnimatedPage>
                   {isAdminAuthenticated ? (
-                    <div>
-                      <div className="admin-logout-bar">
-                        <button
-                          type="button"
-                          className="admin-secondary-button"
-                          onClick={handleLogout}
-                        >
-                          <LogOut size={17} />
-                          Logout
-                        </button>
-                      </div>
-
-                      <Admin
-                        darkMode={darkMode}
-                        projects={projects}
-                        setProjects={setProjects}
-                        skills={skills}
-                        setSkills={setSkills}
-                      />
-                    </div>
+                    <Admin
+                      darkMode={darkMode}
+                      projects={projects}
+                      setProjects={setProjects}
+                      skills={skills}
+                      setSkills={setSkills}
+                      onLogout={handleLogout}
+                    />
                   ) : (
                     <AdminLogin onLogin={handleLogin} />
                   )}
