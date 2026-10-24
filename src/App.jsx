@@ -4,10 +4,12 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  useLocation
+  useLocation,
+  useNavigate
 } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
 import {
   Atom,
   Braces,
@@ -17,7 +19,11 @@ import {
   GitBranch,
   Globe,
   Palette,
-  Wind
+  Wind,
+  LockKeyhole,
+  Eye,
+  EyeOff,
+  LogOut
 } from "lucide-react"
 
 import Navbar from "./components/Navbar"
@@ -29,6 +35,9 @@ import Services from "./components/Services"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
 import Admin from "./components/Admin"
+
+const ADMIN_PASSWORD = "amin1386"
+const AUTH_KEY = "portfolioAdminAuthenticated"
 
 const pageVariants = {
   initial: { opacity: 0, y: 18 },
@@ -133,16 +142,97 @@ function AnimatedPage({ children }) {
   )
 }
 
+function AdminLogin({ onLogin }) {
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState("")
+  const navigate = useNavigate()
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (password !== ADMIN_PASSWORD) {
+      setError("Incorrect password. Please try again.")
+      toast.error("Incorrect password")
+      return
+    }
+
+    onLogin()
+    toast.success("Login successful!")
+    navigate("/admin", { replace: true })
+  }
+
+  return (
+    <section className="admin-page light">
+      <div className="admin-container">
+        <div className="admin-login-card">
+          <div className="admin-login-icon">
+            <LockKeyhole size={30} />
+          </div>
+
+          <span className="admin-label">ADMIN PANEL</span>
+          <h1>Welcome Back</h1>
+          <p>Enter your password to manage your portfolio.</p>
+
+          <form onSubmit={handleSubmit} className="admin-login-form">
+            <label htmlFor="admin-password">Password</label>
+
+            <div className="admin-password-field">
+              <input
+                id="admin-password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value)
+                  setError("")
+                }}
+                placeholder="Enter admin password"
+                autoComplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((previous) => !previous)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+              </button>
+            </div>
+
+            {error && <p className="admin-login-error">{error}</p>}
+
+            <button type="submit" className="admin-primary-button">
+              <LockKeyhole size={18} />
+              Sign In
+            </button>
+          </form>
+
+          <button
+            type="button"
+            className="admin-login-back"
+            onClick={() => navigate("/")}
+          >
+            Back to Portfolio
+          </button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function AppContent() {
   const [darkMode, setDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(
+    () => sessionStorage.getItem(AUTH_KEY) === "true"
+  )
 
   const [projects, setProjects] = useState(() =>
     getStoredData("portfolioProjects", defaultProjects)
   )
 
   const [skills, setSkills] = useState(getInitialSkills)
-
   const location = useLocation()
 
   useEffect(() => {
@@ -163,6 +253,20 @@ function AppContent() {
       return
     }
   }, [skills])
+
+  const handleLogin = () => {
+    sessionStorage.setItem(AUTH_KEY, "true")
+    setIsAdminAuthenticated(true)
+  }
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(AUTH_KEY)
+    setIsAdminAuthenticated(false)
+    toast.success("Logged out successfully!")
+  }
+
+  const isAdminRoute = location.pathname === "/admin"
+  const showLogin = isAdminRoute && !isAdminAuthenticated
 
   return (
     <div className={darkMode ? "portfolio" : "portfolio light"}>
@@ -189,12 +293,14 @@ function AppContent() {
         }}
       />
 
-      <Navbar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-      />
+      {!showLogin && (
+        <Navbar
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
+        />
+      )}
 
       <main>
         <AnimatePresence mode="wait">
@@ -257,13 +363,30 @@ function AppContent() {
               path="/admin"
               element={
                 <AnimatedPage>
-                  <Admin
-                    darkMode={darkMode}
-                    projects={projects}
-                    setProjects={setProjects}
-                    skills={skills}
-                    setSkills={setSkills}
-                  />
+                  {isAdminAuthenticated ? (
+                    <div>
+                      <div className="admin-logout-bar">
+                        <button
+                          type="button"
+                          className="admin-secondary-button"
+                          onClick={handleLogout}
+                        >
+                          <LogOut size={17} />
+                          Logout
+                        </button>
+                      </div>
+
+                      <Admin
+                        darkMode={darkMode}
+                        projects={projects}
+                        setProjects={setProjects}
+                        skills={skills}
+                        setSkills={setSkills}
+                      />
+                    </div>
+                  ) : (
+                    <AdminLogin onLogin={handleLogin} />
+                  )}
                 </AnimatedPage>
               }
             />
