@@ -77,7 +77,7 @@ function AppContent() {
     { name: "SQL", icon: Database }
   ]
 
-  const projects = [
+  const [projects, setProjects] = useState([
     {
       title: "TodoFlow",
       description:
@@ -109,7 +109,7 @@ function AppContent() {
       github: "#",
       technologies: ["HTML", "CSS", "JavaScript"]
     }
-  ]
+  ])
 
   return (
     <div className={darkMode ? "portfolio" : "portfolio light"}>
@@ -184,6 +184,7 @@ function AppContent() {
                   <Admin
                     darkMode={darkMode}
                     projects={projects}
+                    setProjects={setProjects}
                     skills={skills}
                   />
                 </AnimatedPage>
